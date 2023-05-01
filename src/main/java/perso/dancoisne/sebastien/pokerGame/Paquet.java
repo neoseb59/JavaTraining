@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -44,24 +45,23 @@ public record Paquet(List<Carte> cartes) {
     public boolean isSuccessive() {
         List<Carte> ordered = getCardsByValeur();
         for (int i = 0; i < ordered.size() - 1; i++) {
-            if (ordered.get(i).getValeur().compareTo(ordered.get(i + 1).getValeur()) != 1)
+            if (ordered.get(i).getValeur().ordinal() - ordered.get(i + 1).getValeur().ordinal() != 1)
                 return false;
         }
         return true;
     }
 
-    public int getMaxNumberOfSameValue() {
+    public long getMaxNumberOfSameValue() {
         return cartes()
                 .stream()
-                .collect(groupingBy(Carte::getValeur))
+                .collect(groupingBy(Function.identity(), Collectors.counting()))
                 .values()
                 .stream()
-                .map(List::size)
-                .max(Integer::compare)
-                .get();
+                .max(Long::compare)
+                .orElse(-1L);
     }
 
-    public ArrayList<Carte> getNCartes(int n) throws Exception {
+    public List<Carte> getNCartes(int n) throws Exception {
         if (cartes().size() < n) {
             throw new Exception("Not enough element");
         }
