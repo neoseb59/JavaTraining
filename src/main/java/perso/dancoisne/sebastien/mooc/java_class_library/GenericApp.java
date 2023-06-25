@@ -12,7 +12,7 @@ public class GenericApp {
 
     private static class DequeStack<E> implements Stack<E> {
 
-        private Deque<E> deque;
+        private final Deque<E> deque;
 
         public DequeStack() {
             deque = new ArrayDeque<>();
